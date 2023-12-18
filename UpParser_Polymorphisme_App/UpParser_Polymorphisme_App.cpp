@@ -8,6 +8,12 @@
 #include "HelloCommand.h"
 
 int main(int argc, char* argv[]) {
+    // Check if there are enough command line arguments
+    if (argc < 1) {
+        std::cerr << "Error: Insufficient command line arguments." << std::endl;
+        return 1;
+    }
+
     // Create an instance of Parsing
     Parsing parsing;
     parsing.setExecutableName(argv[0]);
@@ -28,7 +34,7 @@ int main(int argc, char* argv[]) {
     //std::vector<std::string> args(argv + 1, argv + argc);
 
     // Create a list of 
-    std::vector<std::string> args = { "-hello","mazen44mazen2 mazen3","-h"};
+    std::vector<std::string> args = { "-hello","mazen44mazen2 mazen3"};
 
     // Parse the command line arguments
     try {
