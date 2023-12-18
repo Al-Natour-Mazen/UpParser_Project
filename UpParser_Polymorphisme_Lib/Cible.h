@@ -1,18 +1,12 @@
 #pragma once
 #include <string>
-
-class Cible {
+class Target {
+public:
+    Target(const std::string& description, bool canBeEmpty)
+        : description(description), canBeEmpty(canBeEmpty) {}
 
 private:
-	std::string description;
-	bool peutEtreVide;
-
-public:
-    Cible(const std::string& description, bool canBeEmpty)
-        : description(description), peutEtreVide(canBeEmpty) {}
-
-    const std::string& getDescription() const { return description; }
-    bool canBeEmpty() const { return canBeEmpty; }
+    std::string description;
+    bool canBeEmpty;
 };
-
 

@@ -1,27 +1,19 @@
 #pragma once
+
 #include "Commande.h"
+#include "Parsing.h"
 
-class HelpCommand : public Commande {
+class HelpCommand : public Command {
 public:
-    HelpCommand() : Commande("help", { "-h" }, 0, "Display help information", false, true) {}
+    HelpCommand(Parsing* parsToAdd);
 
-    void affecterArguments(const std::vector<std::string>& args) {
-        // No arguments for help command
-    }
+    void processArgs(const std::vector<std::string>& args) override;
 
-    void lancerFonction()  {
-        // Display help information for all commands and exit
-        for (const auto& command : commandes) {
-            std::cout << "Command: " << command->getName() << std::endl;
-            std::cout << "Aliases: ";
-            for (const auto& alias : command->getAliases()) {
-                std::cout << alias << " ";
-            }
-            std::cout << std::endl;
-            std::cout << "Description: " << command->getDescription() << std::endl;
-            std::cout << "Arguments: " << command->getNumArgs() << std::endl;
-            std::cout << std::endl;
-        }
-    }
+    void execute() override;
+
+    void setParsing(Parsing* parsing);
+
+private:
+    Parsing* parsing;
 };
 
