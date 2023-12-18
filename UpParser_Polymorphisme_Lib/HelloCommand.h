@@ -6,7 +6,7 @@ class HelloCommand : public Command {
 private:
     std::string nameToHello;
 public:
-    HelloCommand() : Command("hello", { "-hello"}, 1, "Print 'Hello, World!'", false, true) {}
+    HelloCommand() : Command("hello", { "-hello"}, 1, "Print 'Hello, [Args] !'", false, true) {}
 
     void processArgs(const std::vector<std::string>& args) override {
         nameToHello = args.front();

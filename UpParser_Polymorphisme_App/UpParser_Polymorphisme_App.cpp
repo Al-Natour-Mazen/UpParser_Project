@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     //std::vector<std::string> args(argv + 1, argv + argc);
 
     // Create a list of 
-    std::vector<std::string> args = { "-hello","mazen"};
+    std::vector<std::string> args = { "-hello","mazen44mazen2 mazen3","-h"};
 
     // Parse the command line arguments
     try {
