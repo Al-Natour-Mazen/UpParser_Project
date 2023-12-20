@@ -2,12 +2,16 @@
 //
 
 #include <iostream>
-#include <Parsing.h>
-#include <Commande.h>
-#include <HelpCommand.h>
+#include "../UpParser_Polymorphisme_Lib/Parsing.h"
+#include "../UpParser_Polymorphisme_Lib/Command.h"
+#include "../UpParser_Polymorphisme_Lib/HelpCommand.h"
+#include "../UpParser_Polymorphisme_Lib/Target.h"
+
 #include "HelloCommand.h"
 
 int main(int argc, char* argv[]) {
+    // TEST with VS with argv options : -hello mazen -hello tata *.png -hello bob -h
+
     // Check if there are enough command line arguments
     if (argc < 1) {
         std::cerr << "Error: Insufficient command line arguments." << std::endl;
@@ -16,7 +20,6 @@ int main(int argc, char* argv[]) {
 
     // Create an instance of Parsing
     Parsing parsing;
-    parsing.setExecutableName(argv[0]);
 
     // Create a list of Command pointers
     std::vector<Command*> commands;
@@ -25,26 +28,24 @@ int main(int argc, char* argv[]) {
     commands.push_back(new HelpCommand(&parsing));
     commands.push_back(new HelloCommand());
 
+    Target* target= new Target("recupere quelque chose", false);
+
+    parsing.addTarget(target);
+
     // Add the commands to the Parsing instance
     for (Command* command : commands) {
         parsing.addCommand(command);
     }
 
-    // Convert command line arguments to a vector of strings
-    //std::vector<std::string> args(argv + 1, argv + argc);
-
-    // Create a list of 
-    std::vector<std::string> args = { "-hello","mazen44mazen2 mazen3"};
-
     // Parse the command line arguments
     try {
-        parsing.parseCommandLine(args);
+        parsing.parseCommandLine(argc,argv);
     }
     catch (const std::invalid_argument& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         parsing.printHelp();
 
-        // delete the commands at the end to avoid memory leaks
+        // delete the commands 
         for (Command* command : commands) {
             delete command;
         }
@@ -52,10 +53,12 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // delete the commands at the end to avoid memory leaks
+    // delete the commands 
     for (Command* command : commands) {
         delete command;
     }
+
+    delete target;
 
     return 0;
 }

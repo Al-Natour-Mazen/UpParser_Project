@@ -5,7 +5,7 @@
 HelpCommand::HelpCommand(Parsing* parsToAdd) : Command("help", { "-h" }, 0, "Print this help", false, true), parsing(parsToAdd) {}
 
 void HelpCommand::processArgs(const std::vector<std::string>& args) {
-    // Ignore arguments for the help command
+    // no arguments for the help command
 }
 
 void HelpCommand::execute() {

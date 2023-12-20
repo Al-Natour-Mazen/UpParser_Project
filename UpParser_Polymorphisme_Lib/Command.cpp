@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Commande.h"
+#include "Command.h"
 #include <algorithm>
 
 Command::Command(const std::string& name, const std::vector<std::string>& aliases,
@@ -10,11 +10,6 @@ Command::Command(const std::string& name, const std::vector<std::string>& aliase
 const std::string& Command::getName() const {
     return name;
 }
-
-bool Command::match(const std::string& arg) const {
-    return arg == name || std::find(aliases.begin(), aliases.end(), arg) != aliases.end();
-}
-
 int Command::getNumArgs() const {
     return numArgs;
 }
