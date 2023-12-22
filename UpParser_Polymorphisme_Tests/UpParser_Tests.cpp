@@ -1,22 +1,26 @@
 #include "pch.h"
 #include "gtest/gtest.h"
 #include "../UpParser_Polymorphisme_Lib/HelpCommand.h"
-
+#include <chrono>
 
 namespace COO_Parser_Classes_Tests {
     class Toto : public Command {
     public:
+        std::chrono::steady_clock::time_point executionTime;
         Toto() : Command("TOTO", { "-toto" }, 0, "Print 'Toto Tata Titi !'", false, true) {}
         void processArgs(const std::vector<std::string>& args) {}
         void execute() {
+            executionTime = std::chrono::steady_clock::now();
             std::cout << "Toto Tata Titi !" << std::endl;
         }
+       
     };
 
     class HelloCommand : public Command {
     private:
         std::string nameToHello;
     public:
+        std::chrono::steady_clock::time_point executionTime;
         HelloCommand() : Command("hello", { "-hello" }, 1, "Print 'Hello, [Arg] !'", true, false) {}
 
         void processArgs(const std::vector<std::string>& args) {
@@ -24,6 +28,7 @@ namespace COO_Parser_Classes_Tests {
         }
 
         void execute() {
+            executionTime = std::chrono::steady_clock::now();
             std::cout << "Hello, " << nameToHello << "!" << std::endl;
         }
     };
@@ -75,36 +80,23 @@ namespace COO_Parser_Tests {
 
     // Test for immediate command execution.
     TEST(ParsingTest, ImmediateCommandExecution) {
-        Parsing parsing;
-        HelpCommand helpCommand(&parsing);
-        parsing.addCommand(&helpCommand);
-  
-
-        char* argv[] = { "executableImmediateCommandExecution", "-h" };
-        int argc = sizeof(argv) / sizeof(argv[0]);
-
-        parsing.parseCommandLine(argc, argv);
-
-        // Check if the HelpCommand is processed as expected.
-        ASSERT_TRUE(helpCommand.isProcessed());
-    }
-
-    // Test for non-immediate command execution.
-    TEST(ParsingTest, NonImmediateCommandExecution) {
-        Parsing parsing;
-        HelpCommand helpCommand(&parsing);
-        parsing.addCommand(&helpCommand);
+        Parsing parsing(true);
         Toto toto;
         parsing.addCommand(&toto);
+        HelloCommand hello;
+        parsing.addCommand(&hello);
+  
 
-        char* argv[] = { "executableNonImmediateCommandExecution","-toto", "arg1", "arg2", "-h" };
+        char* argv[] = { "executableImmediateCommandExecution","-hello", "mazen", "-toto" };
         int argc = sizeof(argv) / sizeof(argv[0]);
 
         parsing.parseCommandLine(argc, argv);
 
+        // Check if the Toto command is executed before the Hello command.
+        ASSERT_TRUE(toto.executionTime < hello.executionTime);
         // Check if Toto command and HelpCommand are processed as expected.
         ASSERT_TRUE(toto.isProcessed());
-        ASSERT_TRUE(helpCommand.isProcessed());
+        ASSERT_TRUE(hello.isProcessed());
     }
 
     // Test for detecting the absence of a required command.
