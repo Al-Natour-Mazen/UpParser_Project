@@ -142,7 +142,7 @@ namespace COO_Parser_Tests {
         char* argv[] = { "executableExecuteCommande", "-nonExistentCommand" };
         int argc = sizeof(argv) / sizeof(argv[0]);
 
-        // Add assertions to check if an exception is thrown for the nonexistent command.
+        // Check if an exception is thrown for the nonexistent command.
         ASSERT_THROW(parsing.parseCommandLine(argc, argv), std::invalid_argument);
     }
 
@@ -195,6 +195,7 @@ namespace COO_Parser_Tests {
         }
     }
 
+    // Test for the Execution Order of commands.
     TEST(ParsingTest, CommandExecutionOrder) {
         Parsing parsing;
 
