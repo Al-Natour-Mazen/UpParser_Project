@@ -18,9 +18,12 @@
     <ClCompile Include="UpParser_Polymorphisme_App.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="HelloCommand.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\UpParser_Polymorphisme_Lib\HelloCommand.h">
+    <ClInclude Include="HelloCommand.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HelloCommand.cpp" />
     <ClCompile Include="UpParser_Polymorphisme_App.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +138,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\UpParser_Polymorphisme_Lib\HelloCommand.h" />
+    <ClInclude Include="HelloCommand.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
