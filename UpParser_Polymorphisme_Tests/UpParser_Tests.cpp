@@ -32,9 +32,8 @@ namespace COO_Parser_Tests {
     TEST(ParsingTest, ImmediateCommandExecution) {
         Parsing parsing;
         HelpCommand helpCommand(&parsing);
-        Target target("retrieve something", false);  // Assuming the Target class exists
         parsing.addCommand(&helpCommand);
-        parsing.addTarget(&target);
+  
 
         char* argv[] = { "executableImmediateCommandExecution", "-h" };
         int argc = sizeof(argv) / sizeof(argv[0]);
@@ -109,7 +108,7 @@ namespace COO_Parser_Tests {
         HelloCommand hello;
         parsing.addCommand(&hello);
 
-        char* argv[] = { "executableExecuteCommande", "-hello", "mazen" };
+        char* argv[] = { "executableExecuteCommande", "-hello", "mazen", "file1"};
         int argc = sizeof(argv) / sizeof(argv[0]);
 
         // Call parseCommandLine to simulate the execution of the command.

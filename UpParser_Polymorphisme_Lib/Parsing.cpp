@@ -1,144 +1,108 @@
 #include "pch.h"
 #include "Parsing.h"
-#include <iostream>
-
 
 // Constructor 
 Parsing::Parsing() : allowEmptyTargets(false) {}
 
-// Process immediate command based on the provided command name and command line arguments
-void Parsing::processImmediateCommand(const std::string& command, const std::vector<std::string>& commandLine, size_t& i) {
-    auto it = commandMap.find(command);
-    if (it != commandMap.end() && it->second->isImmediate()) {
-        std::vector<std::string> args;
-        size_t nextIndex = i + 1;
-
-        for (int j = 0; j < it->second->getNumArgs(); ++j) {
-            if (nextIndex < commandLine.size()) {
-                args.push_back(commandLine[nextIndex]);
-                ++nextIndex;
-            }
-            else {
-                throw std::invalid_argument("Missing arguments for command: " + command);
-            }
-        }
-
-        // Process and execute the immediate command
-        it->second->processArgs(args);
-        it->second->execute();
-        it->second->setProcessed(true);
-    }
-}
-
-// Process non-immediate command based on the provided command name and command line arguments
-void Parsing::processNonImmediateCommand(const std::string& command, const std::vector<std::string>& commandLine, size_t& i) {
-    auto it = commandMap.find(command);
-    if (it != commandMap.end() && !it->second->isImmediate()) {
-        std::vector<std::string> args;
-        for (int j = 0; j < it->second->getNumArgs(); ++j) {
-            size_t nextIndex = i + 1;
-            if (nextIndex < commandLine.size()) {
-                args.push_back(commandLine[nextIndex]);
-                ++i; // Increment i to skip processed arguments
-            }
-            else {
-                throw std::invalid_argument("Missing arguments for command: " + command);
-            }
-        }
-
-        // Process and execute the non-immediate command
-        it->second->processArgs(args);
-        it->second->execute();
-        it->second->setProcessed(true);
-    }
-}
-
-// Process and add targets to the 'targets' vector
-void Parsing::processTargets(const std::vector<std::string>& commandLine) {
-    for (const auto& arg : commandLine) {
-        if (!isCommand(arg)) {
-            // Add target to the 'targets' vector
-            Target* target = new Target(arg, true); // Adjust based on your implementation
-            targets.push_back(target);
-        }
-    }
-}
 
 // Check for missing required commands and execute immediate commands if required
-void Parsing::checkRequiredCommands() {
+void Parsing::checkRequiredCommands(const std::vector<std::string>& commandLine) {
     for (const auto& entry : commandMap) {
-        if (entry.second->isRequired() && !entry.second->isProcessed()) {
-            if (entry.second->isImmediate()) {
-                // For immediate commands, execute and mark as processed
-                entry.second->execute();
-                entry.second->setProcessed(true);
-            }
-            else {
-                // For non-immediate commands, throw an error
+        if (entry.second->isRequired()) {
+            auto it = std::find(commandLine.begin(), commandLine.end(), entry.first);
+            if (it == commandLine.end()) {
                 throw std::invalid_argument("Missing required command: " + entry.first);
             }
         }
     }
 }
 
+
 // Check if targets are required and throw an error if they are not present
-void Parsing::checkTargets() {
-    if (targets.empty() && !allowEmptyTargets) {
+void Parsing::checkTargets(const std::vector<std::string>& commandLine) {
+    if (commandLine.size() > 1 && targets.empty() && !allowEmptyTargets && !commandMap.empty()) {
         throw std::invalid_argument("At least one target is required.");
     }
 }
 
-// Parse the command line arguments
+
 void Parsing::parseCommandLine(int argc, char* argv[]) {
     executableName = argv[0];
-    const std::vector<std::string> commandLine(argv + 1, argv + argc);
-    size_t i = 0;
+    std::vector<std::string> commandLine(argv + 1, argv + argc);
 
-    // Process immediate commands first
+    processCommands(commandLine);
+   
+    // Check if targets are required and throw an error if they are not present
+    checkTargets(commandLine);
+
+    // Check for required commands first
+    checkRequiredCommands(commandLine);
+
+    // Execute immediate commands
+    executeCommands(immediateCommands);
+
+    // Process non-immediate commands
+    executeCommands(nonimmediateCommands);
+}
+
+void Parsing::processCommands(std::vector<std::string>& commandLine) {
+    size_t i = 0;
     while (i < commandLine.size()) {
         const std::string& arg = commandLine[i];
 
         if (isCommand(arg)) {
-            // Check if the command is registered in the commandMap
-            if (commandMap.find(arg) != commandMap.end()) {
-                processImmediateCommand(arg, commandLine, i);
-            }
-            else {
-                // Handle the case where an unrecognized command is encountered
-                throw std::invalid_argument("Unrecognized command: " + arg);
-            }
-           
+            Command* currentCommand = processCommand(arg, commandLine, i);
+            (void)currentCommand;
+        } else {
+            targets.push_back(arg); // It's a target
         }
 
         ++i;
     }
+}
 
-    // Process non-immediate commands
-    for (size_t i = 0; i < commandLine.size(); ++i) {
-        const std::string& arg = commandLine[i];
+Command* Parsing::processCommand(const std::string& arg, std::vector<std::string>& commandLine, size_t& i) {
+    if (commandMap.find(arg) != commandMap.end()) {
+        Command* currentCommand = commandMap[arg];
+        std::vector<std::string> args = getCommandArguments(arg, commandLine, i, currentCommand->getNumArgs());
 
-        if (isCommand(arg)) {
+        if (currentCommand->isImmediate()) {
+            immediateCommands.emplace_back(currentCommand, args); // Collect immediate command for later execution
+        } else {
+            nonimmediateCommands.emplace_back(currentCommand, args); // Collect non-immediate command for later execution
+        }
 
-            // Check if the command is registered in the commandMap
-            if (commandMap.find(arg) != commandMap.end()) {
-                processNonImmediateCommand(arg, commandLine, i);
-            }
-            else {
-                // Handle the case where an unrecognized command is encountered
-                throw std::invalid_argument("Unrecognized command: " + arg);
-            }
+        return currentCommand;
+    } else {
+        throw std::invalid_argument("Unrecognized command: " + arg); // Handle the case where an unrecognized command is encountered
+    }
+}
+
+std::vector<std::string> Parsing::getCommandArguments(const std::string& arg, std::vector<std::string>& commandLine, size_t& i, int numArgs) {
+    std::vector<std::string> args;
+    for (int j = 0; j < numArgs; ++j) {
+        size_t nextIndex = i + 1;
+        if (nextIndex < commandLine.size() && !isCommand(commandLine[nextIndex])) {
+            args.push_back(commandLine[nextIndex]);
+            ++i;
+        } else {
+            throw std::invalid_argument("Missing arguments for command: " + arg);
         }
     }
 
-    // Process and add targets
-    processTargets(commandLine);
-
-    // Check for missing required commands
-    checkRequiredCommands();
-
-    // Check if targets are present
-    checkTargets();
+    return args;
 }
+
+void Parsing::executeCommands(const std::vector<std::pair<Command*, std::vector<std::string>>>& commands) {
+    for (const auto& command : commands) {
+        if (!command.first->isProcessed()) {
+            command.first->processArgs(command.second);
+            command.first->execute();
+            command.first->setProcessed(true);
+        }
+    }
+}
+
 
 // Print information about a command, avoiding duplication
 void Parsing::printCommand(const Command* command, std::set<std::string>& displayedCommands) const {
@@ -170,39 +134,23 @@ void Parsing::printCommands() const {
     }
 }
 
-// Print information about all targets
-void Parsing::printTargets() const {
-    std::cout << "Targets:" << std::endl;
-    for (const auto& target : targets) {
-        std::cout << "\t" << target->getDescription() << " (Can be empty: " << (target->canTargetBeEmpty() ? "Yes" : "No") << ")" << std::endl;
-    }
-}
 
 // Print help information, including usage, commands, and targets
 void Parsing::printHelp() const {
-    std::cout << "Usage: " << executableName << " [ --help|-h ] Files+" << std::endl;
+    std::cout << "Usage: " << executableName << " [ Commande ] Files+" << std::endl;
     std::cout << "\tFiles : Files to compile" << std::endl;
 
     // Print information about all commands
     printCommands();
-
-    // Print information about all targets
-    printTargets();
 }
 
 // Add a command to the command map
 void Parsing::addCommand(Command* command) {
-    commandMap[command->getName()] = command;
+   //commandMap[command->getName()] = command;
     for (const auto& alias : command->getAliases()) {
         commandMap[alias] = command;
     }
 }
-
-// Add a target to the 'targets' vector
-void Parsing::addTarget(Target* target) {
-    targets.push_back(target);
-}
-
 
 // Check if a given argument is a command
 bool Parsing::isCommand(const std::string& arg) const {

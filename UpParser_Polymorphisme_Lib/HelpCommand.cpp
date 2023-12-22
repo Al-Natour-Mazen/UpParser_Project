@@ -2,7 +2,7 @@
 #include "HelpCommand.h"
 #include "Parsing.h"
 
-HelpCommand::HelpCommand(Parsing* parsToAdd) : Command("help", { "-h" }, 0, "Print this help", false, true), parsing(parsToAdd) {}
+HelpCommand::HelpCommand(Parsing* parsToAdd) : Command("help", { "-h" }, 0, "Print this help", true, true), parsing(parsToAdd) {}
 
 void HelpCommand::processArgs(const std::vector<std::string>& args) {
     // no arguments for the help command

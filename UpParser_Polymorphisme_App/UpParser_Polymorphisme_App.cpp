@@ -28,10 +28,6 @@ int main(int argc, char* argv[]) {
     commands.push_back(new HelpCommand(&parsing));
     commands.push_back(new HelloCommand());
 
-    Target* target= new Target("recupere quelque chose", false);
-
-    parsing.addTarget(target);
-
     // Add the commands to the Parsing instance
     for (Command* command : commands) {
         parsing.addCommand(command);
@@ -57,8 +53,6 @@ int main(int argc, char* argv[]) {
     for (Command* command : commands) {
         delete command;
     }
-
-    delete target;
 
     return 0;
 }

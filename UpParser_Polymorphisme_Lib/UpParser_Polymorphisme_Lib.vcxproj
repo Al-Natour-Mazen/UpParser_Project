@@ -149,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Command.cpp" />
-    <ClCompile Include="HelloCommand.cpp" />
     <ClCompile Include="HelpCommand.cpp" />
     <ClCompile Include="Parsing.cpp" />
     <ClCompile Include="pch.cpp">
