@@ -7,7 +7,7 @@ Parsing::Parsing() : allowEmptyTargets(false) {}
 
 // Check for missing required commands and execute immediate commands if required
 void Parsing::checkRequiredCommands(const std::vector<std::string>& commandLine) {
-    for (const auto& entry : commandMap) {
+    for (const std::pair<const std::string, Command*>& entry : commandMap) {
         if (entry.second->isRequired()) {
             auto it = std::find(commandLine.begin(), commandLine.end(), entry.first);
             if (it == commandLine.end()) {
@@ -51,8 +51,7 @@ void Parsing::processCommands(std::vector<std::string>& commandLine) {
         const std::string& arg = commandLine[i];
 
         if (isCommand(arg)) {
-            Command* currentCommand = processCommand(arg, commandLine, i);
-            (void)currentCommand;
+            processCommand(arg, commandLine, i);
         } else {
             targets.push_back(arg); // It's a target
         }
@@ -61,7 +60,7 @@ void Parsing::processCommands(std::vector<std::string>& commandLine) {
     }
 }
 
-Command* Parsing::processCommand(const std::string& arg, std::vector<std::string>& commandLine, size_t& i) {
+void Parsing::processCommand(const std::string& arg, std::vector<std::string>& commandLine, size_t& i) {
     if (commandMap.find(arg) != commandMap.end()) {
         Command* currentCommand = commandMap[arg];
         std::vector<std::string> args = getCommandArguments(arg, commandLine, i, currentCommand->getNumArgs());
@@ -71,8 +70,6 @@ Command* Parsing::processCommand(const std::string& arg, std::vector<std::string
         } else {
             nonimmediateCommands.emplace_back(currentCommand, args); // Collect non-immediate command for later execution
         }
-
-        return currentCommand;
     } else {
         throw std::invalid_argument("Unrecognized command: " + arg); // Handle the case where an unrecognized command is encountered
     }
@@ -86,7 +83,7 @@ std::vector<std::string> Parsing::getCommandArguments(const std::string& arg, st
             args.push_back(commandLine[nextIndex]);
             ++i;
         } else {
-            throw std::invalid_argument("Missing arguments for command: " + arg);
+            throw std::invalid_argument("Missing arguments for command: " + arg + " , this commande need " + std::to_string(numArgs) + " arg(s).");
         }
     }
 
@@ -94,7 +91,7 @@ std::vector<std::string> Parsing::getCommandArguments(const std::string& arg, st
 }
 
 void Parsing::executeCommands(const std::vector<std::pair<Command*, std::vector<std::string>>>& commands) {
-    for (const auto& command : commands) {
+    for (const std::pair<Command*, std::vector<std::string>>& command : commands) {
         if (!command.first->isProcessed()) {
             command.first->processArgs(command.second);
             command.first->execute();
@@ -108,7 +105,7 @@ void Parsing::executeCommands(const std::vector<std::pair<Command*, std::vector<
 void Parsing::printCommand(const Command* command, std::set<std::string>& displayedCommands) const {
     if (displayedCommands.find(command->getName()) == displayedCommands.end()) {
         std::cout << "\t" << command->getName();
-        for (const auto& alias : command->getAliases()) {
+        for (const std::string& alias : command->getAliases()) {
             std::cout << "|" << alias;
         }
         if (command->getNumArgs() > 0) {
@@ -128,7 +125,7 @@ void Parsing::printCommands() const {
     // Keep track of displayed commands to avoid duplication
     std::set<std::string> displayedCommands;
 
-    for (const auto& entry : commandMap) {
+    for (const std::pair<const std::string, Command*>& entry : commandMap) {
         const Command* command = entry.second;
         printCommand(command, displayedCommands);
     }
@@ -146,8 +143,7 @@ void Parsing::printHelp() const {
 
 // Add a command to the command map
 void Parsing::addCommand(Command* command) {
-   //commandMap[command->getName()] = command;
-    for (const auto& alias : command->getAliases()) {
+    for (const std::string& alias : command->getAliases()) {
         commandMap[alias] = command;
     }
 }

@@ -28,7 +28,7 @@ private:
     std::vector<std::pair<Command*, std::vector<std::string>>> nonimmediateCommands;
 
     void processCommands(std::vector<std::string>& commandLine);
-    Command* processCommand(const std::string& arg, std::vector<std::string>& commandLine, size_t& i);
+    void processCommand(const std::string& arg, std::vector<std::string>& commandLine, size_t& i);
     std::vector<std::string> getCommandArguments(const std::string& arg, std::vector<std::string>& commandLine, size_t& i, int numArgs);
     void executeCommands(const std::vector<std::pair<Command*, std::vector<std::string>>>& commands);
     void processNonImmediateCommands(std::vector<std::string>& commandLine);
