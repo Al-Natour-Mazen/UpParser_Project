@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="UpParser_Tests.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="HelloCommandBis.cpp">
+      <Filter>Classes_Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Toto.cpp">
+      <Filter>Classes_Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCommand.cpp">
+      <Filter>Classes_Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCommand.cpp">
+      <Filter>Classes_Tests\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="HelloCommandBis.h">
+      <Filter>Classes_Tests\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Toto.h">
+      <Filter>Classes_Tests\include</Filter>
+    </ClInclude>
+    <ClInclude Include="AddCommand.h">
+      <Filter>Classes_Tests\include</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCommand.h">
+      <Filter>Classes_Tests\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Classes_Tests">
+      <UniqueIdentifier>{d71bf31f-f211-405c-b060-ad1a0ca00861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes_Tests\src">
+      <UniqueIdentifier>{7e5d3999-8210-4c23-8944-23ccd997701c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes_Tests\include">
+      <UniqueIdentifier>{524f45a9-e651-4480-a8a2-2b557a585b1e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

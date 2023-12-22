@@ -1,80 +1,10 @@
 #include "pch.h"
 #include "gtest/gtest.h"
 #include "../UpParser_Polymorphisme_Lib/HelpCommand.h"
-#include <chrono>
-
-namespace COO_Parser_Classes_Tests {
-    class Toto : public Command {
-    public:
-        std::chrono::steady_clock::time_point executionTime;
-        Toto() : Command("TOTO", { "-toto" }, 0, "Print 'Toto Tata Titi !'", false, true) {}
-        void processArgs(const std::vector<std::string>& args) {}
-        void execute() {
-            executionTime = std::chrono::steady_clock::now();
-            std::cout << "Toto Tata Titi !" << std::endl;
-        }
-       
-    };
-
-    class HelloCommand : public Command {
-    private:
-        std::string nameToHello;
-    public:
-        std::chrono::steady_clock::time_point executionTime;
-        HelloCommand() : Command("hello", { "-hello" }, 1, "Print 'Hello, [Arg] !'", true, false) {}
-
-        void processArgs(const std::vector<std::string>& args) {
-            nameToHello = args[0];
-        }
-
-        void execute() {
-            executionTime = std::chrono::steady_clock::now();
-            std::cout << "Hello, " << nameToHello << "!" << std::endl;
-        }
-    };
-
-    // Global variable to record the order of command execution.
-    std::vector<std::string> executionOrder;
-
-    class TestCommand : public Command {
-    private:
-        std::string commandName;
-    public:
-        TestCommand(const std::string& name) : Command(name, { "-" + name }, 1, name + " [args]", false, false), commandName(name) {}
-
-        void processArgs(const std::vector<std::string>& args) {}
-
-        void execute() {
-            // Save the command name in the execution order.
-            executionOrder.push_back(commandName);
-        }
-    };
-
-    class AddCommand : public Command {
-    private:
-        int number1;
-        int number2;
-    public:
-        AddCommand() : Command("Add", { "-add" }, 2, "add [args]", false, false), number1(0), number2(0) {}
-
-        void processArgs(const std::vector<std::string>& args) {
-            try {
-                number1 = std::stoi(args[0]);
-                number2 = std::stoi(args[1]);
-            }
-            catch (std::invalid_argument& e) {
-                throw std::runtime_error("Les arguments doivent être des nombres valides.");
-            }
-        }
-
-        void execute() {
-            int sum = number1 + number2;
-            std::cout << "La somme est " << sum << std::endl;
-        }
-    };
-}
-
-using namespace COO_Parser_Classes_Tests;
+#include "Toto.h"
+#include "HelloCommandBis.h"
+#include "AddCommand.h"
+#include "TestCommand.h"
 
 namespace COO_Parser_Tests {
 
@@ -83,7 +13,7 @@ namespace COO_Parser_Tests {
         Parsing parsing(true);
         Toto toto;
         parsing.addCommand(&toto);
-        HelloCommand hello;
+        HelloCommandBis hello;
         parsing.addCommand(&hello);
   
 
@@ -104,7 +34,7 @@ namespace COO_Parser_Tests {
         Parsing parsing;
         HelpCommand helpCommand(&parsing);
         parsing.addCommand(&helpCommand);
-        HelloCommand hello;
+        HelloCommandBis hello;
         parsing.addCommand(&hello);
 
         char* argv[] = { "executableMissingRequiredCommand" };
@@ -128,7 +58,7 @@ namespace COO_Parser_Tests {
     TEST(ParsingTest, ExecuteCommande) {
         Parsing parsing;
 
-        HelloCommand hello;
+        HelloCommandBis hello;
         parsing.addCommand(&hello);
 
         char* argv[] = { "executableExecuteCommande", "-nonExistentCommand" };
@@ -142,7 +72,7 @@ namespace COO_Parser_Tests {
     TEST(ParsingTest, ExecuteCommandeReturn) {
         Parsing parsing;
 
-        HelloCommand hello;
+        HelloCommandBis hello;
         parsing.addCommand(&hello);
 
         char* argv[] = { "executableExecuteCommande", "-hello", "mazen", "file1"};
