@@ -7,7 +7,7 @@ public:
     Command(const std::string& name, const std::vector<std::string>& aliases,
         int numArgs, const std::string& description, bool required, bool immediate);
 
-    virtual ~Command() {}
+    virtual ~Command() {};
    
     virtual void processArgs(const std::vector<std::string>& args) = 0;
     virtual void execute() = 0;
