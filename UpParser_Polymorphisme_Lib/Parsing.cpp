@@ -2,7 +2,7 @@
 #include "Parsing.h"
 
 // Constructor 
-Parsing::Parsing() : allowEmptyTargets(false) {}
+Parsing::Parsing(bool allowIfEmptyTargets) : allowEmptyTargets(allowIfEmptyTargets) {}
 
 
 // Check for missing required commands and execute immediate commands if required

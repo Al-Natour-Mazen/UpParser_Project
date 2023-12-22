@@ -11,7 +11,7 @@
 
 class Parsing {
 public:
-    Parsing();
+    Parsing(bool allowTargets = false);
     
     void checkRequiredCommands(const std::vector<std::string>& commandLine);
     void checkTargets(const std::vector<std::string>& commandLine);
@@ -27,12 +27,15 @@ private:
     std::vector<std::pair<Command*, std::vector<std::string>>> immediateCommands;
     std::vector<std::pair<Command*, std::vector<std::string>>> nonimmediateCommands;
 
+    //Helpers for the parseCommandLine Mehtod
     void processCommands(std::vector<std::string>& commandLine);
     void processCommand(const std::string& arg, std::vector<std::string>& commandLine, size_t& i);
     std::vector<std::string> getCommandArguments(const std::string& arg, std::vector<std::string>& commandLine, size_t& i, int numArgs);
     void executeCommands(const std::vector<std::pair<Command*, std::vector<std::string>>>& commands);
     void processNonImmediateCommands(std::vector<std::string>& commandLine);
+    bool isCommand(const std::string& arg) const;
+
+    //Helpers for the PrintHelp Mehtod
     void printCommand(const Command* command, std::set<std::string>& displayedCommands) const;
     void printCommands() const;
-    bool isCommand(const std::string& arg) const;
 };

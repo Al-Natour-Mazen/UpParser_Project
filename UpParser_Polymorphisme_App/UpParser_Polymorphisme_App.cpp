@@ -10,8 +10,6 @@
 #include "HelloCommand.h"
 
 int main(int argc, char* argv[]) {
-    // TEST with VS with argv options : -hello mazen -hello tata *.png -hello bob -h
-
     // Check if there are enough command line arguments
     if (argc < 1) {
         std::cerr << "Error: Insufficient command line arguments." << std::endl;
