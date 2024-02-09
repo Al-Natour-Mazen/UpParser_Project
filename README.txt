@@ -1,15 +1,7 @@
- ____________________________________
-|UpParser COO, M1 Informatique, CL.  |	
-|- Al Natour Mazen                   |                
-|____________________________________|
-
 Vous trouverez 1 dossier et un fichier dans ce répertoire :
 -------------------------------------------------------------
 		
 	* Dossier UpParser_COO_Al-Natour_Mazen : Ce dossier contient le projet Visual Studio comprenant la bibliothèque, les tests et une app avec le main.
-
-	* UpParser_UML : L'UML demandé pour les classes.
-	
 
 Comment fonctionne mon Parser ? 
 ------------------------------
